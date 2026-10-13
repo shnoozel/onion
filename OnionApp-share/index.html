@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Onion Sampler</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#fff6ea">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <canvas id="logo" width="16" height="16"></canvas>
+  <div class="brand">ONION<small>SAMPLER</small></div>
+  <div class="page-name" id="pageName">KICK</div>
+  <div class="corner">
+    <button id="gPlay" class="gplay">▶</button>
+    <button id="fxBtn" class="fxbtn">FX</button>
+    <button id="mixBtn" class="mixbtn"><canvas id="miniScope"></canvas><span id="mixDots" class="mixdots"></span></button>
+  </div>
+</header>
+<div class="punch" id="punch">
+  <div class="punch-box">
+    <div class="punch-head"><span class="punch-title">PUNCH</span><span class="punch-sub">HOLD A PAD · DOUBLE TAP: LATCH</span><button id="punchClose" class="tog">CLOSE</button></div>
+    <div class="punch-now" id="punchNow">—</div>
+    <div class="ppads" id="punchPads"></div>
+    <div class="punch-rec">
+      <button id="punchRec" class="tog rec">● REC</button>
+      <button id="punchUnlatch" class="tog">UNLATCH</button>
+      <button id="punchClear" class="tog">CLEAR LANE</button>
+    </div>
+    <div class="plane" id="punchLane"></div>
+  </div>
+</div>
+<div class="mixer" id="mixer">
+  <div class="mix-box">
+    <div class="mix-head"><span>MIXER</span><button id="mixClose" class="tog">CLOSE</button></div>
+    <canvas id="bigScope"></canvas>
+    <div id="mixStrips"></div>
+  </div>
+</div>
+
+<main>
+  <section id="page-kick" class="page on">
+    <div class="graph-card" id="graphCard">
+      <canvas id="graph"></canvas>
+      <div class="graph-info"><span id="noteInfo">F1</span><span id="lenInfo">700 MS</span></div>
+      <div class="graph-hint">DRAG THE SQUARES · TAP TO PLAY</div>
+    </div>
+
+    <div class="seq-card">
+      <div class="seq-head">
+        <button id="btnPlay" class="play-btn">▶</button>
+        <div class="bpm" id="bpm"><span class="lab">BPM</span><span class="num" id="bpmVal">132</span></div>
+        <div class="bpm" id="swing"><span class="lab">SWING</span><span class="num" id="swingVal">0%</span></div>
+      </div>
+      <div id="sqKick"></div>
+      <canvas id="barView" class="view bar"></canvas>
+    </div>
+
+    <div class="chips" id="presets"></div>
+    <div id="sections"></div>
+    <div class="spacer"></div>
+  </section>
+
+  <section id="page-bass" class="page">
+    <div class="seq-card">
+      <div class="seq-head">
+        <button id="bsPlay" class="play-btn">▶</button>
+        <div class="bpm" id="bsBpmBox"><span class="lab">BPM</span><span class="num" id="bsBpm">132</span></div>
+        <button id="bsHear" class="tog">HEAR</button>
+      </div>
+      <div id="sqBass"></div>
+      <div class="wave-hint">ROLL: TAP THE GRID FOR A NOTE · DRAG IT UP / DOWN / SIDEWAYS · ITS RIGHT EDGE: LENGTH · DOUBLE TAP: REMOVE · ~ = GLIDE</div>
+    </div>
+    <div class="chips" id="bassPresets"></div>
+    <div id="bassSections"></div>
+    <div class="spacer"></div>
+  </section>
+
+  <section id="page-acid" class="page">
+    <div class="seq-card">
+      <div class="seq-head">
+        <button id="acPlay" class="play-btn">▶</button>
+        <div class="bpm" id="acBpmBox"><span class="lab">BPM</span><span class="num" id="acBpm">128</span></div>
+        <div class="bpm" id="acSwingBox"><span class="lab">SWING</span><span class="num" id="acSwing">0%</span></div>
+      </div>
+      <div class="key-row"><button id="acKey" class="src-btn">A MINOR</button><div class="mini-chips" id="acScales"></div></div>
+      <div id="sqAcid"></div>
+      <div class="wave-hint">ROLL: TAP THE GRID FOR A NOTE · DRAG A NOTE UP / DOWN / SIDEWAYS · DOUBLE TAP: REMOVE · A = ACCENT, ~ = SLIDE</div>
+    </div>
+
+    <div class="sec" data-sec="acid-synth">
+      <h3><span>303</span></h3>
+      <div class="seg" id="acWave"><button>SAW</button><button>SQUARE</button></div>
+      <div class="pads2" id="acPads"></div>
+      <div class="knobs" id="acKnobs1"></div>
+      <div class="knobs" id="acKnobs2"></div>
+    </div>
+
+    <div class="sec" data-sec="acid-gen">
+      <h3><span>GENERATOR</span></h3>
+      <div class="knobs knobs6" id="acGenKnobs"></div>
+      <div class="locks"><span class="lane-lab">LOCK</span>
+        <button class="tog" id="acLock_notes">NOTES</button><button class="tog" id="acLock_gates">GATES</button>
+        <button class="tog" id="acLock_acc">ACC</button><button class="tog" id="acLock_slide">SLIDE</button><button class="tog" id="acLock_oct">OCT</button>
+      </div>
+      <div class="chaos-btns"><button id="acMutate" class="tog">MUTATE</button><button id="acClear" class="tog">CLEAR</button></div>
+    </div>
+    <div class="sec" data-sec="acid-fx"><h3><span>SENDS · SPACE</span></h3><div id="acFx" class="fx-panel"></div></div>
+    <div class="spacer"></div>
+  </section>
+
+  <section id="page-tex" class="page">
+    <div class="src-row">
+      <button id="texSource" class="src-btn"><span id="texName">NO SOUND</span><small>CHANGE</small></button>
+      <div class="bpm"><span class="lab">LENGTH</span><span class="num" id="texLen">—</span></div>
+    </div>
+    <div class="src-tools"><button id="texAdd" class="tog">+ FILE</button><button id="texRec" class="tog rec">● MIC</button></div>
+    <input type="file" id="texFile" accept="audio/*" hidden>
+    <div class="graph-card tex-card"><canvas id="texWave"></canvas><canvas id="texRail"></canvas></div>
+    <div class="wave-hint">THE SOUND: TOUCH IT TO PLAY FROM THERE (UP: TINY GRAINS, DOWN: LONG) · THE RAIL BELOW: WHERE THE KEYS PLAY FROM</div>
+    <div class="tex-keys-card">
+      <canvas id="texKeys"></canvas>
+      <div class="tex-kctl">
+        <div class="mini-seg" id="texScale"></div>
+        <div class="tex-oct"><button id="texOctDn" class="tog">−</button><span id="texOct">0</span><button id="texOctUp" class="tog">+</button></div>
+      </div>
+      <div class="tex-kctl">
+        <span class="tex-kl">HEIGHT</span><div class="mini-seg" id="texTarget"></div><button id="texGlide" class="tog">GLIDE</button>
+      </div>
+      <div class="rows" id="texKeyRows"></div>
+    </div>
+    <div class="tex-tools">
+      <button id="texScanBtn" class="tog">▶ SCAN</button>
+      <button id="texHold" class="tog">HOLD</button>
+      <button id="texFree" class="tog">LET GO <b id="texHoldN">0</b></button>
+    </div>
+    <div class="sec" data-sec="tex-grains"><h3><span>GRAINS</span></h3><div class="rows" id="texGrains"></div></div>
+    <div class="sec" data-sec="tex-pitch"><h3><span>PITCH</span></h3><div class="rows" id="texPitch"></div></div>
+    <div class="sec" data-sec="tex-amp"><h3><span>AMP · FILTER · POSITION</span></h3><div class="rows" id="texAmp"></div></div>
+    <div class="sec" data-sec="tex-scan"><h3><span>SCAN · MOVES THROUGH THE SOUND BY ITSELF</span></h3><div class="rows" id="texScan"></div></div>
+    <div class="sec" data-sec="tex-space"><h3><span>SPACE</span></h3><div class="rows" id="texSpace"></div></div>
+    <div class="spacer"></div>
+  </section>
+
+  <section id="page-lib" class="page">
+    <div class="lib-head"><span id="libCount">0 SOUNDS</span></div>
+    <div class="carry">
+      <div class="carry-t">CARRY IT ALL · PATTERNS, SETTINGS, SOUNDS, BREAKS AND TEXTURES IN ONE FILE</div>
+      <div class="carry-b"><button id="bkSave" class="tog">⇪ SAVE ALL TO A FILE</button><button id="bkLoad" class="tog">⇩ LOAD A FILE</button></div>
+      <input type="file" id="bkFile" accept=".json,application/json" hidden>
+    </div>
+    <div id="libList"></div>
+    <div class="empty" id="libEmpty">NOTHING HERE YET.<br>MAKE A KICK AND HIT SAMPLE.</div>
+    <div class="spacer"></div>
+  </section>
+
+  <section id="page-slicer" class="page">
+    <div class="src-row">
+      <button id="slSource" class="src-btn"><span id="slName">NO BREAK</span><small>CHANGE</small></button>
+      <div class="bpm" id="slOrigBox"><span class="lab">ORIG</span><span class="num" id="slOrig">136</span></div>
+    </div>
+    <div class="src-tools"><button id="slAdd" class="tog">+ FILES</button><button id="slRec" class="tog rec">● REC</button></div>
+    <div class="graph-card"><canvas id="slWave"></canvas></div>
+    <div class="wave-tools">
+      <button id="slZoomOut" class="tog">−</button><span id="slZoomV" class="zv">1X</span><button id="slZoomIn" class="tog">+</button>
+      <button id="slZoomSel" class="tog">SLICE</button><button id="slZoomFit" class="tog">ALL</button>
+      <span class="wt-gap"></span>
+      <button id="slNudgeL" class="tog">‹</button><button id="slNudgeR" class="tog">›</button><button id="slSnap" class="tog">ZERO</button>
+    </div>
+    <div class="wave-hint">TAP: PLAY · DRAG A LINE · DOUBLE TAP: ADD / REMOVE · PINCH: ZOOM · ‹ ›: NUDGE THE SELECTED LINE · ZERO: LINES SNAP TO A ZERO CROSSING</div>
+    <div class="finder">
+      <div class="seg" id="slFind"><button data-f="auto">AUTO</button><button data-f="sens">SENS</button><button data-f="count">COUNT</button><button data-f="grid">GRID</button><button data-f="hand" disabled>HAND</button></div>
+      <div id="slFindRow"></div>
+      <div class="find-info" id="slFindInfo"></div>
+    </div>
+
+    <div class="seq-card">
+      <div class="seq-head">
+        <button id="slPlay" class="play-btn">▶</button>
+        <div class="bpm" id="slBpmBox"><span class="lab">BPM</span><span class="num" id="slBpm">170</span></div>
+        <div class="bpm" id="slSwingBox"><span class="lab">SWING</span><span class="num" id="slSwing">0%</span></div>
+        <div class="seq-chips"><button id="slWrite">WRITE</button></div>
+      </div>
+      <div id="sqBreak"></div>
+      <div class="wave-hint">ROLL: A ROW A SLICE · TAP THE GRID TO PLACE IT · DRAG A HIT UP / DOWN: ANOTHER SLICE, SIDEWAYS: ANOTHER STEP · DOUBLE TAP: REMOVE</div>
+    </div>
+
+    <div class="sec">
+      <h3><span>SLICES · TAP TO PLAY</span></h3>
+      <div class="pads" id="slPads"></div>
+      <div class="slice-ctl"><div class="knobs" id="slSliceKnobs"></div><button id="slRev" class="tog">REV</button></div>
+    </div>
+
+    <div class="sec" data-sec="chaos">
+      <h3><span>CHAOS</span></h3>
+      <div class="knobs knobs6" id="slChaosKnobs"></div>
+      <div class="chaos-btns"><button id="slMutate" class="tog">MUTATE</button><button id="slClear" class="tog">CLEAR</button></div>
+    </div>
+    <div class="sec"><h3><span>AMP · ALL HITS</span></h3>
+      <canvas id="slAmp" class="env-cv"></canvas>
+      <div class="wave-hint">DRAG THE SQUARES: ATTACK · HOLD (TO THE RIGHT EDGE: FULL) · DECAY. A HIT CAN HAVE ITS OWN: SELECT IT IN THE ROLL</div>
+    </div>
+    <div class="sec"><h3><span>WHOLE BREAK</span></h3><div class="knobs" id="slGlobalKnobs"></div></div>
+    <div class="spacer"></div>
+    <input type="file" id="slFile" accept="audio/*" multiple hidden>
+  </section>
+</main>
+
+<div class="actions" id="kickActions">
+  <button id="btnDice" class="act">DICE</button>
+  <button id="btnMutate" class="act">MUTATE</button>
+  <button id="btnSample" class="act main">SAMPLE</button>
+</div>
+
+<div class="actions" id="bsActions" style="display:none">
+  <button id="bsSample" class="act main">SAMPLE</button>
+</div>
+
+<div class="actions" id="texActions" style="display:none">
+  <button id="texResample" class="act main">● RESAMPLE</button>
+</div>
+
+<div class="actions" id="acActions" style="display:none">
+  <button id="acGen" class="act">GENERATE</button>
+  <button id="acUndo" class="act">UNDO</button>
+  <button id="acSample" class="act main">SAMPLE</button>
+</div>
+
+<div class="actions" id="slActions" style="display:none">
+  <button id="slOrder" class="act">ORDER</button>
+  <button id="slChop" class="act">CHOP!</button>
+  <button id="slUndo" class="act">UNDO</button>
+  <button id="slSample" class="act main">SAMPLE</button>
+</div>
+
+<div class="sheet" id="texPick">
+  <div class="sheet-box">
+    <div class="sheet-title">A SOUND TO PLAY WITH</div>
+    <div class="pick-list" id="texPickList"></div>
+    <button id="texPickClose" class="cancel">CANCEL</button>
+  </div>
+</div>
+<div class="sheet" id="slPick">
+  <div class="sheet-box">
+    <div class="sheet-title">LOAD A BREAK</div>
+    <div class="pick-list" id="slPickList"></div>
+    <button id="slPickClose" class="cancel">CANCEL</button>
+  </div>
+</div>
+
+<div class="sheet" id="sheet">
+  <div class="sheet-box">
+    <div class="sheet-title">SAMPLE TO LIBRARY</div>
+    <button data-s="kick">KICK</button>
+    <button data-s="bass">BASS</button>
+    <button data-s="loop">LOOP · 1 BAR</button>
+    <button data-s="cancel" class="cancel">CANCEL</button>
+  </div>
+</div>
+
+<nav class="tabs">
+  <button data-page="kick" class="on">KICK</button>
+  <button data-page="bass">BASS</button>
+  <button data-page="slicer">SLICER</button>
+  <button data-page="acid">ACID</button>
+  <button data-page="tex">TEXTURE</button>
+  <button data-page="lib">LIBRARY</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+<script type="importmap">{"imports": {"./acid.js": "./acid.js?v=34", "./app.js": "./app.js?v=34", "./audio.js": "./audio.js?v=34", "./dsp.js": "./dsp.js?v=34", "./lib.js": "./lib.js?v=34", "./mixer.js": "./mixer.js?v=34", "./punch.js": "./punch.js?v=34", "./seqcore.js": "./seqcore.js?v=34", "./slicer.js": "./slicer.js?v=34", "./ui.js": "./ui.js?v=34", "./backup.js": "./backup.js?v=34", "./fxpanel.js": "./fxpanel.js?v=34", "./texture.js": "./texture.js?v=34"}}</script>
+<script type="module" src="app.js?v=34"></script>
+</body>
+</html>
